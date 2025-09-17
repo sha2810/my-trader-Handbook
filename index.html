@@ -578,6 +578,7 @@
         <div id="authContainer">
     <button id="registerBtn" class="btn btn-primary">Register</button>
     <button id="loginBtn" class="btn btn-primary">Login</button>
+    <button id="forgotPasswordBtn" class="btn btn-secondary">Forgot Password</button>
     <button id="logoutBtn" class="btn btn-secondary" style="display:none;">Logout</button>
 </div>
 
@@ -1019,6 +1020,24 @@ document.getElementById('loginBtn').addEventListener('click', () => {
             showNotification("Error: " + error.message, "error");
         });
 });
+
+// Forgot Password
+document.getElementById('forgotPasswordBtn').addEventListener('click', () => {
+    const email = prompt("Enter your registered email:");
+    if (!email) {
+        showNotification("Email is required to reset password.", "error");
+        return;
+    }
+
+    auth.sendPasswordResetEmail(email)
+        .then(() => {
+            showNotification("Password reset email sent! Check your inbox.", "success");
+        })
+        .catch((error) => {
+            showNotification("Error: " + error.message, "error");
+        });
+});
+
 
 // Logout
 document.getElementById('logoutBtn').addEventListener('click', () => {
