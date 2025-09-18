@@ -1381,20 +1381,37 @@ function saveNotes() {
             document.getElementById('deleteModal').classList.add('active');
         }
 
-        function confirmDelete() {
-            if (deleteTradeId) {
-                trades = trades.filter(t => t.id !== deleteTradeId);
-                localStorage.setItem('trades', JSON.stringify(trades));
-                
-                hideDeleteModal();
-                updateDashboard();
-                displayTrades();
-                updateCalendar();
-                updateAnalytics();
-                
-                showNotification('Trade deleted successfully!', 'success');
-            }
+       function confirmDelete() {
+    if (deleteTradeId) {
+        const user = auth.currentUser;
+        if (!user) {
+            showNotification('You must be logged in to delete trades.', 'error');
+            return;
         }
+
+        db.collection('users')
+          .doc(user.uid)
+          .collection('trades')
+          .doc(deleteTradeId)
+          .delete()
+          .then(() => {
+              trades = trades.filter(t => t.id !== deleteTradeId);
+              localStorage.setItem('trades', JSON.stringify(trades));
+
+              hideDeleteModal();
+              updateDashboard();
+              displayTrades();
+              updateCalendar();
+              updateAnalytics();
+
+              showNotification('Trade deleted successfully!', 'success');
+          })
+          .catch(err => {
+              showNotification('Error deleting trade: ' + err.message, 'error');
+          });
+    }
+}
+
 
         function hideDeleteModal() {
             document.getElementById('deleteModal').classList.remove('active');
