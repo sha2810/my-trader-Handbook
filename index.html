@@ -685,6 +685,7 @@
                                     <th>Quantity</th>
                                     <th>P&L</th>
                                     <th>Setup</th>
+                                    <th>Notes</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -1437,6 +1438,15 @@ function saveNotes() {
             displayTradesInTable('recentTradesTable', recentTrades);
         }
 
+        function getPlainTextFromNotes(notes) {
+    try {
+        return JSON.parse(notes).ops.map(op => op.insert).join('').trim();
+    } catch {
+        return notes || '';
+    }
+}
+
+
         function displayTrades() {
             displayTradesInTable('tradesTable', trades);
         }
@@ -1463,6 +1473,7 @@ function saveNotes() {
                     ${tableId === 'tradesTable' ? `<td>${trade.quantity}</td>` : ''}
                     <td class="${pnlClass}">${formatCurrency(trade.profitLoss || 0)}</td>
                     ${tableId === 'tradesTable' ? `<td>${trade.setup || ''}</td>` : ''}
+                    ${tableId === 'tradesTable' ? `<td>${getPlainTextFromNotes(trade.notes)}</td>` : ''}
                     <td>
                         <div class="action-buttons">
                             <button class="btn btn-sm btn-secondary" onclick="showEditTradeModal(${JSON.stringify(trade).replace(/"/g, '&quot;')})">Edit</button>
